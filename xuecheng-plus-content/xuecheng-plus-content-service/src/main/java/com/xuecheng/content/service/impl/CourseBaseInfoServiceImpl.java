@@ -10,8 +10,10 @@ import com.xuecheng.content.mapper.CourseCategoryMapper;
 import com.xuecheng.content.mapper.CourseMarketMapper;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
+import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
+import com.xuecheng.content.model.po.CourseCategory;
 import com.xuecheng.content.model.po.CourseMarket;
 import com.xuecheng.content.service.CourseBaseInfoService;
 import lombok.extern.slf4j.Slf4j;
@@ -136,6 +138,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         return courseBaseInfo;
     }
 
+    @Override
     //查询课程信息
     public CourseBaseInfoDto getCourseBaseInfo(long courseId){
 
@@ -156,9 +159,41 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
         //通过courseCategoryMapper查询分类信息，将分类名称放在courseBaseInfoDto对象
         //todo：课程分类的名称设置到courseBaseInfoDto
+        CourseCategory courseCategory = courseCategoryMapper.selectById(courseId);
+        courseBaseInfoDto.setMtName(courseCategory.getParentid());
+        courseBaseInfoDto.setStName(courseCategory.getId());
 
         return courseBaseInfoDto;
 
+    }
+
+    @Override
+    @Transactional
+    public CourseBaseInfoDto updateCourseBase(Long companyId, EditCourseDto dto) {
+        Long courseId = dto.getId();
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if(courseBase == null) {
+            XueChengPlusException.cast("课程不存在");
+        }
+
+        if(!courseBase.getCompanyId().equals(companyId)) {
+           XueChengPlusException.cast("不能修改其他机构课程！");
+        }
+        //封装基本信息的数据
+        BeanUtils.copyProperties(dto, courseBase);
+        courseBase.setChangeDate(LocalDateTime.now());
+
+        //更新课程基本信息
+        int i = courseBaseMapper.updateById(courseBase);
+
+        //封装营销信息的数据
+        CourseMarket courseMarket = new CourseMarket();
+        BeanUtils.copyProperties(dto, courseMarket);
+        saveCourseMarket(courseMarket);
+
+        //查询课程信息
+        CourseBaseInfoDto courseBaseInfo = this.getCourseBaseInfo(courseId);
+        return courseBaseInfo;
     }
 
     //单独写一个方法保存营销信息，逻辑：存在则更新，不存在则添加
