@@ -1,6 +1,7 @@
 package com.xuecheng.content.api;
 
 
+import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
 import com.xuecheng.content.service.TeachplanService;
@@ -30,5 +31,16 @@ public class TeachPlanController {
         teachplanService.saveTeachplan(teachplanDto);
     }
 
+    @ApiOperation("课程计划删除")
+    @DeleteMapping("/teachplan/{courseId}")
+    public void deleteTeachplan(@PathVariable Long courseId) {
+        teachplanService.deleteTeachplan(courseId);
+    }
+
+    @ApiOperation("课程计划排序")
+    @PostMapping("/teachplan/{moveMethod}/{courseId}")
+    public void moveTeachplan(@PathVariable String moveMethod, @PathVariable Long courseId) {
+        teachplanService.moveTeachplan(moveMethod, courseId);
+    }
 
 }
