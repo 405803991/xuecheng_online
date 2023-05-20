@@ -49,4 +49,24 @@ DELETE {{content_host}}/content/teachplan/43
 DELETE {{content_host}}/content/course/87
 
 ### 查询老师
-GET {{content_host}}/content/courseTeacher/list/75
+GET {{content_host}}/con|tent/courseTeacher/list/75
+
+### 查询课程列表
+POST {{gateway_host}}/content/course/list?pageNo=2&pageSize=1
+Content-Type: application/json
+
+{
+  "auditStatus": "202002",
+  "courseName": ""
+}
+
+### 上传文件
+POST {{media_host}}/media/upload/coursefile
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filedata"; filename="1.jpg"
+Content-Type: application/octet-stream
+
+< C:\Users\SheYue\Desktop/1.jpg
+

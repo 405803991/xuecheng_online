@@ -2,9 +2,20 @@
 spring:
   application:
     name: content-service
+    cloud:
+      nacos:
+        server-addr: 8.130.87.162:8848
+        discovery:
+          namespace: dev
+          group: xuecheng-plus-project
+        config:
+          namespace: dev
+          group: xuecheng-plus-project
+          file-extension: yaml
+          refresh-enabled: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.101.65:3306/xc402_content?serverTimezone=UTC&userUnicode=true&useSSL=false&
+    url: jdbc:mysql://8.130.87.162:3306/xuecheng_content?serverTimezone=UTC&userUnicode=true&useSSL=false&
     username: root
     password: mysql
 # 日志文件配置路径
